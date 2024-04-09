@@ -1,5 +1,6 @@
 require "sinatra"
 require "sinatra/reloader"
+require "active_support/all"
 
 get("/") do
   erb(:square)
@@ -21,8 +22,8 @@ get("/square_root/new") do
 end
 
 get("/square_root/results") do
-  @input = params.fetch("sqrt").to_f
-  @output = @input ** 0.5
+  @sqrt_input = params.fetch("sqrt").to_f
+  @sqrt_output = @sqrt_input ** 0.5
 
   erb(:square_root_results)
 end
@@ -32,17 +33,18 @@ get("/payment/new") do
 end
 
 get("/payment/results") do
-  @apr_input = params.fetch("apr").to_f
+  @apr_input = '%.4f' % params.fetch("apr").to_f.round(4)
+  @apr_input += "%"
   @years_input = params.fetch("years").to_i
-  @principal_input = params.fetch("principal").to_f
+  @principal_input = params.fetch("principal").to_f.to_fs(:currency)
 
-  r = @apr_input / 100 / 12
+  r = @apr_input.to_f / 100 / 12
   term = @years_input * 12
 
-  @nominator = r * @principal_input
-  @denominator = 1 - ((1 + r) ** (-term))
+  @nominator = r * params.fetch("principal").to_f
+  @denominator = 1 - (1 + r) ** -term
 
-  @payment = (@nominator / @denominator).round(2)
+  @payment = (@nominator / @denominator)
 
 
   erb(:payment_results)

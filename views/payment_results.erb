@@ -4,8 +4,8 @@
 <p>Number of years </p>
 <%= @years_input%>
 <p>Principal</p>
-<p>$<%= @principal_input %></p>
+<p><%= @principal_input %></p>
 <p>Payment</p>
-<p>$<%= @payment %></p>
+<p><%= @payment.to_f.to_fs(:currency) %></p>
 <br>
 <a href="/payment/new">Calculate another square root</a>
